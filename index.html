@@ -174,17 +174,41 @@
             }
         });
 
-        // Event listener para sa "Hanapin ang Ruta" button
-        findPathButton.addEventListener("click", () => {
-            const start = startSelect.value;
-            const target = targetSelect.value;
+// Event listener para sa "Hanapin ang Ruta" button
+findPathButton.addEventListener("click", () => {
+    const trainLine = trainSelect.value;
+    const start = startSelect.value;
+    const target = targetSelect.value;
 
-            if (start && target) {
-                resultDiv.innerHTML = `<p>The fastest route from <strong>${start}</strong> to <strong>${target}</strong> will show here.</p>`;
-            } else {
-                resultDiv.innerHTML = `<p>Please Select your Destination.</p>`;
-            }
-        });
+    if (trainLine && start && target) {
+        const trainStations = stations[trainLine];
+        const startIndex = trainStations.indexOf(start);
+        const targetIndex = trainStations.indexOf(target);
+
+        if (startIndex === -1 || targetIndex === -1) {
+            resultDiv.innerHTML = `<p>Invalid start or destination station selected.</p>`;
+            return;
+        }
+
+        // Calculate the fastest route
+        let route = [];
+        if (startIndex <= targetIndex) {
+            route = trainStations.slice(startIndex, targetIndex + 1); // Forward direction
+        } else {
+            route = trainStations.slice(targetIndex, startIndex + 1).reverse(); // Reverse direction
+        }
+
+        // Display the route
+        resultDiv.innerHTML = `
+            <p><strong>Fastest Route:</strong></p>
+            <p>${route.join(" → ")}</p>
+            <p><strong>Start:</strong> ${start}</p>
+            <p><strong>Destination:</strong> ${target}</p>
+        `;
+    } else {
+        resultDiv.innerHTML = `<p>Please select a train, start station, and destination.</p>`;
+    }
+});
 
 // Event listener for "View Train Map" button
 viewMapButton.addEventListener("click", () => {
