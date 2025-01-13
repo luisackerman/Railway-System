@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manila Railway System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            border-bottom: 2px solid #0083f5;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 16px;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4facfe;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0078d7;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .map-button {
+            background-color: #ff5722;
+        }
+
+        .map-button:hover {
+            background-color: #e64a19;
+        }
+
+        .map-container img {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manila Railway System</h1>
+        
+        <!-- Dropdown para sa Tren -->
+        <label for="train">Train</label>
+        <select id="train" required>
+            <option value="">Select a Train</option>
+            <option value="LRT1">LRT 1</option>
+            <option value="LRT2">LRT 2</option>
+            <option value="MRT">MRT 3</option>
+        </select>
+
+        <!-- Dropdown para sa Simula -->
+        <label for="start">Start</label>
+        <select id="start" required>
+            <option value="">Select Start Station</option>
+        </select>
+
+        <!-- Dropdown para sa Destinasyon -->
+        <label for="target">Destination</label>
+        <select id="target" required>
+            <option value="">Target Station</option>
+        </select>
+
+        <button id="findPath">Find Path</button>
+
+        <!-- Button to View Train Map -->
+        <button class="map-button" id="viewMap">View Train Map</button>
+
+        <div class="result" id="result"></div>
+
+        <!-- Map container -->
+        <div class="map-container" id="mapContainer"></div>
+    </div>
+
+    <script>
+        // Listahan ng mga istasyon per linya
+        const stations = {
+            LRT1: [
+                "Baclaran", "EDSA", "Libertad", "Gil Puyat", "Vito Cruz",
+                "Quirino", "Pedro Gil", "United Nations", "Central Terminal",
+                "Carriedo", "Doroteo Jose", "Bambang", "Tayuman", "Blumentritt",
+                "Abad Santos", "R. Papa", "5th Avenue", "Monumento", "Balintawak",
+                "Roosevelt"
+            ],
+            LRT2: [
+                "Recto", "Legarda", "Pureza", "V. Mapa", "J. Ruiz",
+                "Gilmore", "Betty Go-Belmonte", "Cubao", "Anonas",
+                "Katipunan", "Santolan", "Marikina", "Antipolo"
+            ],
+            MRT: [
+                "North Avenue", "Quezon Avenue", "GMA-Kamuning", "Araneta Center-Cubao",
+                "Santolan-Annapolis", "Ortigas", "Shaw Boulevard", "Boni", "Guadalupe",
+                "Buendia", "Ayala", "Magallanes", "Taft Avenue"
+            ]
+        };
+
+        // HTML elements
+        const trainSelect = document.getElementById("train");
+        const startSelect = document.getElementById("start");
+        const targetSelect = document.getElementById("target");
+        const findPathButton = document.getElementById("findPath");
+        const viewMapButton = document.getElementById("viewMap");
+        const resultDiv = document.getElementById("result");
+        const mapContainer = document.getElementById("mapContainer");
+
+        // Event listener para sa pagpili ng Tren
+        trainSelect.addEventListener("change", () => {
+            const selectedTrain = trainSelect.value;
+
+            // Clear existing options
+            startSelect.innerHTML = `<option value="">Select Start Station</option>`;
+            targetSelect.innerHTML = `<option value="">Target Station</option>`;
+
+            if (selectedTrain && stations[selectedTrain]) {
+                // Populate dropdowns with stations of selected train
+                stations[selectedTrain].forEach(station => {
+                    const optionStart = document.createElement("option");
+                    optionStart.value = station;
+                    optionStart.textContent = station;
+
+                    const optionTarget = document.createElement("option");
+                    optionTarget.value = station;
+                    optionTarget.textContent = station;
+
+                    startSelect.appendChild(optionStart);
+                    targetSelect.appendChild(optionTarget);
+                });
+            }
+        });
+
+        // Event listener para sa "Hanapin ang Ruta" button
+        findPathButton.addEventListener("click", () => {
+            const start = startSelect.value;
+            const target = targetSelect.value;
+
+            if (start && target) {
+                resultDiv.innerHTML = `<p>The fastest route from <strong>${start}</strong> to <strong>${target}</strong> will show here.</p>`;
+            } else {
+                resultDiv.innerHTML = `<p>Please Select your Destination.</p>`;
+            }
+        });
+
+// Event listener for "View Train Map" button
+viewMapButton.addEventListener("click", () => {
+    // Check if the map image is already present
+    const existingMap = mapContainer.querySelector("img");
+
+    if (existingMap) {
+        // If the map exists, remove it (hide)
+        mapContainer.innerHTML = "";
+    } else {
+        // If the map doesn't exist, add it (show)
+        const mapImage = document.createElement("img");
+        mapImage.src = "MapTrain.jpg"; // Update path if needed
+        mapImage.alt = "Train Map";
+        mapContainer.appendChild(mapImage);
+    }
+});
+    </script>
+</body>
+</html>
