@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manila Railway System</title>
+    <title>Manila Railway</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,7 +84,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Manila Railway System</h1>
+        <h1>Manila Railway Operation</h1>
         
         <!-- Dropdown para sa Tren -->
         <label for="train">Train</label>
@@ -98,13 +98,13 @@
         <!-- Dropdown para sa Simula -->
         <label for="start">Start</label>
         <select id="start" required>
-            <option value="">Select Start Station</option>
+            <option value="">Current Location</option>
         </select>
 
         <!-- Dropdown para sa Destinasyon -->
         <label for="target">Destination</label>
         <select id="target" required>
-            <option value="">Target Station</option>
+            <option value="">Select Station</option>
         </select>
 
         <button id="findPath">Find Path</button>
@@ -154,8 +154,8 @@
             const selectedTrain = trainSelect.value;
 
             // Clear existing options
-            startSelect.innerHTML = `<option value="">Select Start Station</option>`;
-            targetSelect.innerHTML = `<option value="">Target Station</option>`;
+            startSelect.innerHTML = `<option value="">Current Location</option>`;
+            targetSelect.innerHTML = `<option value="">Select Station</option>`;
 
             if (selectedTrain && stations[selectedTrain]) {
                 // Populate dropdowns with stations of selected train
